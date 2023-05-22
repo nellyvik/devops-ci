@@ -1,0 +1,39 @@
+apiVersion: app/v1
+kind: Deployment
+metadata: 
+ name: application
+ namespace: production
+spec:
+  replicas: 1
+  selector: 
+   matchlabels:
+     app: application
+  templete:
+    metadata:
+      labels:
+        app: application
+  spec:
+    containers:
+      -name: application
+      image: nellyvik/devops-ci-challenge-demo:latest
+      ports:
+        -containerPort:8080
+      env:
+        -name: MY-SECRET
+        valuefrom:
+          secretKeyRef:
+            name: application-secrets
+            key:MY_SECRET
+---
+apiversion: v1
+kind: service
+metadata:
+  name: application-service
+  namespace: production
+spec:
+  selector:
+    app: application
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080  
